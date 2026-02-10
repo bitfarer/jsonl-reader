@@ -1,5 +1,6 @@
 {
-  "name": "jsonl-reader",
+"name": "jsonl-reader",
+  "publisher": "bitfarer",
   "displayName": "JSONL Reader",
   "description": "Fast and clean reader for JSON Lines (JSONL / NDJSON) files",
   "version": "0.0.1",
