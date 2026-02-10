@@ -1,0 +1,125 @@
+{
+  "name": "jsonl-reader",
+  "displayName": "JSONL Reader",
+  "description": "Fast and clean reader for JSON Lines (JSONL / NDJSON) files",
+  "version": "0.0.1",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.109.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:jsonl",
+    "workspaceContains:**/*.jsonl",
+    "workspaceContains:**/*.ndjson"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "jsonl",
+        "aliases": [
+          "JSONL",
+          "JSON Lines",
+          "NDJSON"
+        ],
+        "extensions": [
+          ".jsonl",
+          ".ndjson"
+        ],
+        "mimetypes": [
+          "application/x-ndjson",
+          "application/jsonl"
+        ]
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "jsonlReader.editor",
+        "displayName": "JSONL Reader",
+        "selector": [
+          {
+            "filenamePattern": "*.jsonl"
+          },
+          {
+            "filenamePattern": "*.ndjson"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "commands": [
+      {
+        "command": "jsonlReader.openFile",
+        "title": "Open JSONL File",
+        "category": "JSONL Reader"
+      },
+      {
+        "command": "jsonlReader.openWithReader",
+        "title": "Open with JSONL Reader",
+        "category": "JSONL Reader"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "resourceExtname == .jsonl || resourceExtname == .ndjson",
+          "command": "jsonlReader.openWithReader",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "JSONL Reader",
+      "properties": {
+        "jsonlReader.pageSize": {
+          "type": "number",
+          "default": 100,
+          "minimum": 10,
+          "maximum": 1000,
+          "description": "Number of lines per page"
+        },
+        "jsonlReader.maxSearchResults": {
+          "type": "number",
+          "default": 1000,
+          "description": "Maximum number of search results"
+        },
+        "jsonlReader.useAsDefault": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use JSONL Reader as the default editor for .jsonl files"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run build",
+    "compile": "pnpm run check-types && node esbuild.js",
+    "build": "node esbuild.js --production",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "pnpm run check-types && pnpm run lint && pnpm run build && vsce package --no-dependencies --allow-missing-repository",
+    "vsix": "vsce package --no-dependencies --allow-missing-repository",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "pnpm run compile-tests && pnpm run compile",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.109.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.54.0",
+    "eslint": "^9.39.2",
+    "esbuild": "^0.27.2",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
