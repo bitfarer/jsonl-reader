@@ -66,6 +66,8 @@ export interface SearchOptions {
   useRegex: boolean;
   /** 最大结果数 */
   maxResults: number;
+  /** 是否只显示有error的行 */
+  showErrorOnly?: boolean;
 }
 
 /**
@@ -101,7 +103,7 @@ export type WebviewMessage =
 export type ExtensionMessage =
   | { type: 'pageData'; data: PageData }
   | { type: 'fileStats'; stats: FileStats }
-  | { type: 'searchResults'; results: SearchResult[]; query: string }
+  | { type: 'searchResults'; results: SearchResult[]; query: string; interrupted?: boolean; isErrorOnly?: boolean }
   | { type: 'searchProgress'; current: number; total: number }
   | { type: 'error'; message: string }
   | { type: 'indexingProgress'; progress: number; totalLines: number };

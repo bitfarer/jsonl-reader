@@ -98,6 +98,7 @@ export class JsonlEditorProvider implements vscode.CustomReadonlyEditorProvider 
               break;
 
             case 'search':
+              searchService.resetAbortState();
               await this.handleSearch(filePath, message.options, postMessage);
               break;
 
@@ -139,6 +140,12 @@ export class JsonlEditorProvider implements vscode.CustomReadonlyEditorProvider 
         postMessage({ type: 'searchProgress', current, total });
       }
     );
-    postMessage({ type: 'searchResults', results, query: options.query });
+    postMessage({
+      type: 'searchResults',
+      results,
+      query: options.query,
+      interrupted: searchService.wasSearchAborted(),
+      isErrorOnly: options.showErrorOnly || false
+    });
   }
 }

@@ -29,8 +29,6 @@ export class JsonlReader {
    */
   async readPage(page: number): Promise<PageData> {
     const targetStartLine = (page - 1) * this.pageSize + 1;
-    const targetEndLine = targetStartLine + this.pageSize - 1;
-
     // 1. 获取起始位置的近似值
     const checkpoint = jsonlIndexer.getNearestOffset(this.filePath, targetStartLine);
 
@@ -80,37 +78,37 @@ export class JsonlReader {
         const lines = chunk.split('\n');
 
         // 最后一部分可能是不完整的行，保留到下一次循环
-        // 除非已经是文件末尾 (bytesRead < buffer.length 通常意味着 EOF，但也可能是部分读取，严谨做法是判断文件大小)
         const isEOF = (fileOffset + bytesRead) >= this.fileSize;
         leftovers = isEOF ? '' : lines.pop() || '';
 
-        let chunkByteOffset = fileOffset; // 这个块的起始偏移
-
         for (let i = 0; i < lines.length; i++) {
-          const raw = lines[i];
-          const lineLength = Buffer.byteLength(raw); // 注意：这里简单计算，严谨需累加
-          // 真正的偏移量计算比较复杂，因为 split 丢失了 \r\n 的具体字节。
-          // 简便方法：我们只关心大概内容，或者重新扫描。
-          // 为了高性能，我们这里假设是 \n 分隔。
+          let raw = lines[i];
 
           if (currentLineNum >= startLine) {
-            // 解析
-            result.push(this.parseLine(raw, currentLineNum, 0)); // 偏移量暂不精确计算以节省性能
+            // 处理 BOM (仅在文件开头可能出现)
+            if (currentLineNum === 1 && raw.charCodeAt(0) === 0xFEFF) {
+              raw = raw.slice(1);
+            }
+
+            result.push(this.parseLine(raw, currentLineNum, 0));
           }
 
           currentLineNum++;
-          // 如果已经读够了
           if (result.length >= count) break;
         }
 
         fileOffset += bytesRead;
-        // 回退掉 leftovers 的长度，因为它们还没被消费
+        // 回退掉 leftovers 的长度
         fileOffset -= Buffer.byteLength(leftovers);
       }
 
       // 处理最后遗留的一行 (如果是 EOF)
       if (leftovers && result.length < count && currentLineNum >= startLine) {
-        result.push(this.parseLine(leftovers, currentLineNum, 0));
+        let raw = leftovers;
+        if (currentLineNum === 1 && raw.charCodeAt(0) === 0xFEFF) {
+          raw = raw.slice(1);
+        }
+        result.push(this.parseLine(raw, currentLineNum, 0));
       }
 
     } finally {
@@ -126,6 +124,7 @@ export class JsonlReader {
     let parsed: unknown = null;
     let error: string | undefined;
 
+    // 优化：与 SearchService 保持一致，使用 trim() 
     if (cleanRaw.trim()) {
       try {
         parsed = JSON.parse(cleanRaw);
@@ -139,7 +138,7 @@ export class JsonlReader {
       raw: cleanRaw,
       parsed,
       error,
-      byteOffset: offset // 简化版暂不精确返回偏移
+      byteOffset: offset
     };
   }
 

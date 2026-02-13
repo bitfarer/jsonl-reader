@@ -23,6 +23,54 @@ body {
     overflow: hidden;
 }
 
+/* 关键修复：默认隐藏 loading overlay */
+.loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+/* 只有明确添加 .visible 类时才显示 */
+.loading-overlay.visible {
+    display: flex;
+}
+
+.loading-content {
+    background: var(--vscode-editor-background);
+    padding: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--button-bg);
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    margin-top: 16px;
+    font-size: 14px;
+}
+
 #indexProgressBar {
     height: 2px;
     width: 0%;
@@ -61,6 +109,11 @@ button {
 
 button:disabled { opacity: 0.5; cursor: default; }
 
+/* 隐藏类 - 用于动态控制元素显示 */
+.hidden {
+    display: none !important;
+}
+
 .main-container {
     flex: 1;
     overflow-y: auto;
@@ -74,6 +127,12 @@ button:disabled { opacity: 0.5; cursor: default; }
     font-family: var(--vscode-editor-font-family);
     font-size: 13px;
     transition: background-color 0.3s;
+}
+
+.line-item.error {
+    background-color: rgba(234, 92, 0, 0.15);
+    border-left: 3px solid #e85c00;
+    padding-left: 4px;
 }
 
 @keyframes flash-highlight {
@@ -150,8 +209,53 @@ button:disabled { opacity: 0.5; cursor: default; }
 .json-number { color: var(--number-color); }
 .json-boolean { color: var(--boolean-color); }
 
+.error-badge {
+    color: #e85c00;
+    background: rgba(232, 92, 0, 0.2);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.error-detail {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.15);
+    padding: 8px 12px;
+    margin-top: 8px;
+    border-radius: 4px;
+    font-family: var(--vscode-editor-font-family);
+    font-size: 12px;
+    border-left: 3px solid #ff6b6b;
+}
+
 #fileStatus {
     margin-left: auto;
     font-size: 12px;
     opacity: 0.7;
+}
+
+.toast {
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    background: var(--button-bg);
+    color: var(--button-fg);
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+    z-index: 1001;
+    font-size: 14px;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
