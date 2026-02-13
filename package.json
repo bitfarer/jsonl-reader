@@ -3,7 +3,7 @@
   "publisher": "bitfarer",
   "displayName": "JSONL Reader",
   "description": "Fast and clean reader for JSON Lines (JSONL / NDJSON) files",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.109.0"

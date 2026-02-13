@@ -6,4 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.2] - 2025-02-13
+
+### Bug Fixed
+
+- Fixed incorrect JSON error marking issue
+
+## [0.0.1]
+
 - Initial release
