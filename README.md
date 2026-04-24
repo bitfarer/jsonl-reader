@@ -89,6 +89,14 @@ Initial release of JSONL Reader:
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## Sponsorship
+
+If you find this extension helpful, consider supporting its development:
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/bitfarer)
+
+Your support helps keep this project maintained and improved. Thank you! ☕
+
 ## License
 
 MIT License - see LICENSE file for details
